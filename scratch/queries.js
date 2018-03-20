@@ -35,12 +35,13 @@ mongoose.connect(MONGODB_URI)
   });
 
 //   /* ========== GET/READ A SINGLE ITEM ========== */
-router.get('/notes/:id', (req, res, next) => {
 
-  console.log('Get a Note');
-  res.json({ id: 2 });
+// router.get('/notes/:id', (req, res, next) => {
 
-});
+//   console.log('Get a Note');
+//   res.json({ id: 2 });
+
+// });
 
 // /* ========== POST/CREATE AN ITEM ========== */
 // router.post('/notes', (req, res, next) => {
@@ -65,3 +66,30 @@ router.get('/notes/:id', (req, res, next) => {
 //   res.status(204).end();
 
 // });
+
+const mongoose = require('mongoose');
+
+const { MONGODB_URI } = require('../config');
+const Note = require('../models/note');
+
+mongoose.connect(MONGODB_URI)
+  .then(() => Note.createIndexes())
+  .then(() => {
+    return Note.find(
+      { $text: { $search: 'ways' } })
+      .then(results => {
+        console.log(results);
+      });
+  })
+  .then(() => {
+    return mongoose.disconnect()
+      .then(() => {
+        console.info('Disconnected');
+      });
+  })
+  .catch(err => {
+    console.error(`ERROR: ${err.message}`);
+    console.error(err);
+  });
+
+  

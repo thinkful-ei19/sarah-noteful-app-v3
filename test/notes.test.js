@@ -81,5 +81,75 @@ describe.only('testing api endpoints', function() {
         });
     });
   });
+
+  describe('POST /api/notes', function () {
+    it('should create and return a new item when provided valid data', function () {
+      const newNote = {
+        'title': 'Who doesn\'t love dogs??',
+        'content': 'Bark, bark, bark...',
+        'tags': []
+      };
+      let body;
+      // 1) First, call the API
+      return chai.request(app)
+        .post('/api/notes')
+        .send(newNote)
+        .then(function (res) {
+          body = res.body;
+          expect(res).to.have.status(201);
+          expect(res).to.have.header('location');
+          expect(res).to.be.json;
+          expect(body).to.be.a('object');
+          expect(body).to.include.keys('id', 'title', 'content', 'created');
+          return Note.findById(body.id);
+        })
+        .then(data => {
+          expect(body.title).to.equal(data.title);
+          expect(body.content).to.equal(data.content);
+        });
+    });
+  });
+
+  describe.only('PUT /api/notes', function () {
+    it('should update and return a new item when provided valid data', function () {
+      const updatedNote = {
+        'title': 'Who doesn\'t love dogs!',
+        'content': 'Bark, bark, bark...',
+        'tags': []
+      };
+      return Note.findOne()
+        .then(function(note) {
+          updatedNote.id = note.id;
+          return chai.request(app)
+            .put(`/api/notes/${note.id}`)
+            .send(updatedNote);
+        })
+        .then(function(res) {
+          expect(res).to.have.status(200);
+          expect(res).to.be.json;
+          expect(res.body).to.be.a('object');
+          expect(res.body).to.include.keys('id', 'title', 'content', 'created');
+
+          return Note.findById(updatedNote.id);
+        })
+      // 3) **then** compare
+        .then(function(note) {
+          expect(note.title).to.equal(updatedNote.title);
+          expect(note.content).to.equal(updatedNote.content);
+        });
+
+    });
+  });
+  
+
+  //delete tests
+  // describe('DELETE /api/notes/:id', function () {
+  //   it('should delete an item by id', function () {
+  //     let data;
+  //     return Note.findOne()
+  //   })
+  // })
+
 });
+
 

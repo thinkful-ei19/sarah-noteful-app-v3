@@ -32,7 +32,7 @@ router.get('/notes', (req, res, next) => {
 
 /* ========== GET/READ A SINGLE ITEM ========== */
 router.get('/notes/:id', (req, res, next) => {
-   Note.findById(req.params.id)
+  Note.findById(req.params.id)
     .then( note => {
       res.json(note);
       console.log(res.location);
@@ -56,7 +56,7 @@ router.post('/notes', (req, res, next) => {
     return next(err);
   }
   console.log(newNote);
-  return create(newNote)
+  Note.create(newNote)
     .then(result => {
       res.location(`${req.originalURL}/${result.id}`)
         .status(201)
@@ -80,7 +80,7 @@ router.put('/notes/:id', (req, res, next) => {
     return next(err);
   }
 
-  return findByIdAndUpdate(id, updateNote, {new: true})
+  Note.findByIdAndUpdate(id, updateNote, {new: true})
     .then( result => {
       if(result) {
         res.json(result);
@@ -97,7 +97,7 @@ router.put('/notes/:id', (req, res, next) => {
 /* ========== DELETE/REMOVE A SINGLE ITEM ========== */
 router.delete('/notes/:id', (req, res, next) => {
   Note
-  .findByIdAndRemove(req.params.id)
+    .findByIdAndRemove(req.params.id)
     .then( count => {
       if(count) {
         res.status(204).end();

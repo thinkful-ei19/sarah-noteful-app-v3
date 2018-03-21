@@ -32,7 +32,7 @@ router.get('/notes', (req, res, next) => {
 
 /* ========== GET/READ A SINGLE ITEM ========== */
 router.get('/notes/:id', (req, res, next) => {
-  return findById(req.params.id)
+   Note.findById(req.params.id)
     .then( note => {
       res.json(note);
       console.log(res.location);
